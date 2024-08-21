@@ -11,6 +11,8 @@ namespace Data
     public class AppDbContext : DbContext
     {
         public DbSet<Exercise> Exercises { get; set; }
+
+        public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseSqlServer("Data Source=HP;Initial Catalog=ExerciseDb;Integrated Security=True;Trust Server Certificate=True");
         

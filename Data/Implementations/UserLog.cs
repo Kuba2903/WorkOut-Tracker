@@ -70,8 +70,6 @@ namespace Data.Implementations
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-        private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
     
     
     }

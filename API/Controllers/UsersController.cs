@@ -1,5 +1,6 @@
 ﻿using Data.DTO_s;
 using Data.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,5 +35,6 @@ namespace API.Controllers
 
             return Ok(token);
         }
+
     }
 }

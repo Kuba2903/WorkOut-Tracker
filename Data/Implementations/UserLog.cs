@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using BCrypt.Net;
 
 namespace Data.Implementations
 {
@@ -46,8 +47,10 @@ namespace Data.Implementations
             {
                 Email = register.Email,
                 Name = register.Name,
-                Password = register.Password
+                Password = BCrypt.Net.BCrypt.HashPassword(register.Password)
             };
+
+            
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();

@@ -17,6 +17,10 @@ namespace Data.Entities
 
         public string? Category { get; set; }
 
+        public int? Repetition { get; set; }
+        public int? Sets { get; set; }
+        public int? Weight { get; set; }
+
         public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
 
     }

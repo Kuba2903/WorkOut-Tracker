@@ -31,23 +31,29 @@ namespace Data.Implementations
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == login.Email);
 
-            string token = GenerateToken(user);
-
-            return token;
+            if (BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
+            {
+                string token = GenerateToken(user);
+                return token;
+            }
+            else
+            {
+                return "Invalid password";
+            }
         }
 
         public async Task<string> RegisterAsync(RegisterDTO register)
         {
             if(register.Password != register.PasswordConfirm)
             {
-                throw new Exception("passwords doesnt match");
+                return "passwords doesnt match";
             }
 
             var user = new User()
             {
                 Email = register.Email,
                 Name = register.Name,
-                Password = BCrypt.Net.BCrypt.HashPassword(register.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(register.Password, BCrypt.Net.BCrypt.GenerateSalt())
             };
 
             

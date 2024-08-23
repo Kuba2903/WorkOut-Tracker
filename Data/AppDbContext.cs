@@ -14,12 +14,16 @@ namespace Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Workout> Workouts { get; set; }
+        public DbSet<WorkoutExercise> WorkoutExercise { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseSqlServer("Data Source=HP;Initial Catalog=ExerciseDb;Integrated Security=True;Trust Server Certificate=True");
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WorkoutExercise>()
+                .HasKey(x => new { x.ExerciseId, x.WorkoutId });
         }
     }
 }

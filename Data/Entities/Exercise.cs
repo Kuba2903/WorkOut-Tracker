@@ -12,10 +12,12 @@ namespace Data.Entities
 
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
 
-        public string Category { get; set; }
+        public string? Category { get; set; }
+
+        public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
 
     }
 }

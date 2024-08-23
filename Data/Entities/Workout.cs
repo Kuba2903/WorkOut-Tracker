@@ -10,10 +10,10 @@ namespace Data.Entities
     {
         public int Id { get; set; }
 
-        public List<Exercise>? Exercises { get; set; }
-
         public string? Comments { get; set; }
 
         public DateTime? ScheduleTime { get; set; }
+
+        public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
     }
 }

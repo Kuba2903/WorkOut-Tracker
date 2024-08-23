@@ -15,6 +15,7 @@ namespace Data
         public DbSet<User> Users { get; set; }
         public DbSet<Workout> Workouts { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercise { get; set; }
+        public DbSet<WorkoutUser> WorkoutUser { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseSqlServer("Data Source=HP;Initial Catalog=ExerciseDb;Integrated Security=True;Trust Server Certificate=True");
         
@@ -24,6 +25,9 @@ namespace Data
 
             modelBuilder.Entity<WorkoutExercise>()
                 .HasKey(x => new { x.ExerciseId, x.WorkoutId });
+
+            modelBuilder.Entity<WorkoutUser>()
+                .HasKey(x => new { x.WorkoutId, x.UserId });
         }
     }
 }

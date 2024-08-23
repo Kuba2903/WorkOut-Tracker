@@ -15,5 +15,6 @@ namespace Data.Entities
         public DateTime? ScheduleTime { get; set; }
 
         public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
+        public ICollection<WorkoutUser>? WorkoutUsers { get; set; }
     }
 }

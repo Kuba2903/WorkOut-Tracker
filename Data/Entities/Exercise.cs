@@ -14,12 +14,12 @@ namespace Data.Entities
 
         public string? Description { get; set; }
 
-
-        public string? Category { get; set; }
-
         public int? Repetition { get; set; }
         public int? Sets { get; set; }
         public int? Weight { get; set; }
+
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
 
         public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -7,6 +8,19 @@ namespace API.Controllers
     [ApiController]
     public class WorkOutsController : ControllerBase
     {
+        private readonly AppDbContext db;
 
+        public WorkOutsController(AppDbContext db)
+        {
+            this.db = db;
+        }
+
+        [HttpPost]
+        [Route("createWorkout")]
+        public async Task<IActionResult> CreateWorkout()
+        {
+
+            return Ok();
+        }
     }
 }

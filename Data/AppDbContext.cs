@@ -14,6 +14,8 @@ namespace Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Workout> Workouts { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercise { get; set; }
         public DbSet<WorkoutUser> WorkoutUser { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>

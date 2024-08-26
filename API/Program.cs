@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>();
 builder.Services.AddScoped<IUserLog, UserLog>();
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
 var jwtsection = builder.Configuration.GetSection(nameof(JwtSection)).Get<JwtSection>();
 

@@ -56,7 +56,7 @@ namespace API.Controllers
             await dbContext.Exercises.AddAsync(entity);
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Entity created");
         }
 
 
@@ -89,7 +89,27 @@ namespace API.Controllers
                 entity.CategoryId = category?.Id;
 
                 await dbContext.SaveChangesAsync();
-                return Ok();
+                return Ok("Entity updated");
+            }
+            else
+            {
+                return NotFound("Entity not found");
+            }
+        }
+
+
+        [HttpDelete]
+        [Route("exerciseDelete")]
+
+        public async Task<IActionResult> Delete(string name)
+        {
+            var entity = await dbContext.Exercises.FirstOrDefaultAsync(x => x.Name == name);
+
+            if (entity != null)
+            {
+                dbContext.Exercises.Remove(entity);
+                await dbContext.SaveChangesAsync();
+                return Ok("Deleted");
             }
             else
             {

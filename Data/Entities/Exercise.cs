@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Data.Entities
@@ -19,6 +20,7 @@ namespace Data.Entities
         public int? Weight { get; set; }
 
         public int? CategoryId { get; set; }
+        [JsonIgnore]
         public Category? Category { get; set; }
 
         public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }

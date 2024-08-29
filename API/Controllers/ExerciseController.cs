@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+using System.Text.Json;
+
 namespace API.Controllers
 {
     [Route("api/[controller]")]
@@ -19,6 +21,27 @@ namespace API.Controllers
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+        }
+
+        [HttpGet]
+        [Route("getExercises")]
+
+        public async Task<IActionResult> SelectExercises(string? category, int? repetition, int? sets, int? weight)
+        {
+            var entities = await dbContext.Exercises.Include(x => x.Category)
+                .Where(x => x.Repetition == repetition || x.Sets == sets || x.Weight == weight
+                || x.Category.Name == category).ToListAsync();
+
+
+            if(entities.Any())
+            {
+                return Ok(entities);
+            }
+            else
+            {
+                var allEntities = await dbContext.Exercises.AsQueryable().ToListAsync();
+                return Ok(allEntities);
+            }
         }
 
         [HttpPost]

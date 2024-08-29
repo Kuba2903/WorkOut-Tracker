@@ -71,5 +71,30 @@ namespace API.Controllers
                 return x;
             }
         }
+
+
+        [HttpPut]
+        [Route("exerciseUpdate")]
+        public async Task<IActionResult> Update(ExerciseDTO dto)
+        {
+            var entity = await dbContext.Exercises.FirstOrDefaultAsync(x => x.Name == dto.Name);
+            var category = await dbContext.Categories.FirstOrDefaultAsync(x => x.Name == dto.Category);
+
+            if(entity != null)
+            {
+                entity.Weight = dto.Weight;
+                entity.Description = dto.Description;
+                entity.Sets = dto.Sets;
+                entity.Repetition = dto.Repetition;
+                entity.CategoryId = category?.Id;
+
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return NotFound("Entity not found");
+            }
+        }
     }
 }

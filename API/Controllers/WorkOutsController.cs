@@ -30,6 +30,7 @@ namespace API.Controllers
 
             Workout workout = new Workout()
             {
+                Name = dto.Name,
                 Comments = dto.Comment
             };
 
@@ -51,5 +52,12 @@ namespace API.Controllers
 
             return Ok("Workout added");
         }
+
+        /*[HttpPut]
+        [Route("updateWorkout")]
+        public async Task<IActionResult> Update()
+        {
+
+        }*/
     }
 }

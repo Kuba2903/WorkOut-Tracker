@@ -8,6 +8,7 @@ namespace Data.DTO_s
 {
     public class WorkOutDTO
     {
+        public string Name { get; set; }
         public string? Comment { get; set; }
 
         public List<string> ExerciseNames { get; set; }

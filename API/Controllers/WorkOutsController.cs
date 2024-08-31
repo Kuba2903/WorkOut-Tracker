@@ -21,7 +21,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("createWorkout")]
-        public async Task<IActionResult> CreateWorkout(WorkOutDTO dto)
+        public async Task<IActionResult> Create(WorkOutDTO dto)
         {
             var exercises = await db.Exercises
                         .Where(e => dto.ExerciseNames.Contains(e.Name))
@@ -53,11 +53,36 @@ namespace API.Controllers
             return Ok("Workout added");
         }
 
-        /*[HttpPut]
+        [HttpPut]
         [Route("updateWorkout")]
-        public async Task<IActionResult> Update()
+        public async Task<IActionResult> Update(WorkOutDTO dto)
         {
+            var entity = await db.Workouts.FirstOrDefaultAsync(x => x.Name == dto.Name);
+            var exercises = await db.Exercises.Where(e => dto.ExerciseNames.Contains(e.Name)).ToListAsync();
+            var workoutExercise = await db.WorkoutExercise.Where(x => x.WorkoutId == entity.Id).ToListAsync();
 
-        }*/
+            List<WorkoutExercise> modified = new List<WorkoutExercise>();
+            entity.Comments += $". {dto.Comment}";
+
+            foreach (var exercise in exercises)
+            {
+                foreach (var workoutexercsise in workoutExercise)
+                {
+                    if(workoutexercsise.ExerciseId != exercise.Id)
+                    {
+                        modified.Add(new WorkoutExercise { ExerciseId = exercise.Id, WorkoutId = entity.Id });
+                    }
+                }
+            }
+
+            foreach (var item in modified)
+            {
+                await db.WorkoutExercise.AddAsync(item);
+            }
+
+            await db.SaveChangesAsync();
+
+            return Ok("Updated");
+        }
     }
 }

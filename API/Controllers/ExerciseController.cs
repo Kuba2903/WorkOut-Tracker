@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         [Route("getExercises")]
 
-        public async Task<IActionResult> SelectExercises(string? category, int? repetition, int? sets, int? weight)
+        public async Task<IActionResult> Select(string? category, int? repetition, int? sets, int? weight)
         {
             var entities = await dbContext.Exercises.Include(x => x.Category)
                 .Where(x => x.Repetition == repetition || x.Sets == sets || x.Weight == weight

@@ -19,6 +19,36 @@ namespace API.Controllers
             this.db = db;
         }
 
+        [HttpGet]
+        [Route("getWorkout")]
+
+        public async Task<IActionResult> Select()
+        {
+            var entity = await db.WorkoutExercise
+                .Include(x => x.Workout)
+                .Include(x => x.Exercise)
+                .GroupBy(x => new
+                {
+                    x.Workout.Name,
+                    x.Workout.Comments,
+                    x.Workout.ScheduleTime
+                })
+                .Select(g => new
+                {
+                    WorkoutName = g.Key.Name,
+                    Comments = g.Key.Comments,
+                    ScheduleTime = g.Key.ScheduleTime,
+                    Exercises = g.Select(e => new
+                    {
+                        ExerciseName = e.Exercise.Name,
+                        ExerciseDescription = e.Exercise.Description
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(entity);
+        }
+
         [HttpPost]
         [Route("createWorkout")]
         public async Task<IActionResult> Create(WorkOutDTO dto)
@@ -57,12 +87,12 @@ namespace API.Controllers
         [Route("updateWorkout")]
         public async Task<IActionResult> Update(WorkOutDTO dto)
         {
-            var entity = await db.Workouts.FirstOrDefaultAsync(x => x.Name == dto.Name);
+            var workout = await db.Workouts.FirstOrDefaultAsync(x => x.Name == dto.Name);
             var exercises = await db.Exercises.Where(e => dto.ExerciseNames.Contains(e.Name)).ToListAsync();
-            var workoutExercise = await db.WorkoutExercise.Where(x => x.WorkoutId == entity.Id).ToListAsync();
+            var workoutExercise = await db.WorkoutExercise.Where(x => x.WorkoutId == workout.Id).ToListAsync();
 
             List<WorkoutExercise> modified = new List<WorkoutExercise>();
-            entity.Comments += $". {dto.Comment}";
+            workout.Comments += $". {dto.Comment}";
 
             foreach (var exercise in exercises)
             {
@@ -70,7 +100,7 @@ namespace API.Controllers
                 {
                     if(workoutexercsise.ExerciseId != exercise.Id)
                     {
-                        modified.Add(new WorkoutExercise { ExerciseId = exercise.Id, WorkoutId = entity.Id });
+                        modified.Add(new WorkoutExercise { ExerciseId = exercise.Id, WorkoutId = workout.Id });
                     }
                 }
             }

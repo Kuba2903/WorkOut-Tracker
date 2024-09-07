@@ -11,6 +11,7 @@ namespace Data.DTO_s
         public string Name { get; set; }
         public string? Comment { get; set; }
 
+        public DateTime? ScheduleTime { get; set; }
         public List<string> ExerciseNames { get; set; }
     }
 }

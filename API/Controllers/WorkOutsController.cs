@@ -4,6 +4,7 @@ using Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 
 namespace API.Controllers
@@ -61,7 +62,8 @@ namespace API.Controllers
             Workout workout = new Workout()
             {
                 Name = dto.Name,
-                Comments = dto.Comment
+                Comments = dto.Comment,
+                ScheduleTime = dto.ScheduleTime
             };
 
             await db.Workouts.AddAsync(workout);
@@ -134,6 +136,25 @@ namespace API.Controllers
             {
                 return NotFound();
             }
+        }
+
+        /// <summary>
+        /// Allows to schedule workouts for specific date
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="timeSchedule"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("schedule")]
+        public async Task<IActionResult> Schedule(string name, DateTime timeSchedule)
+        {
+            var entity = await db.Workouts.Where(x => !x.ScheduleTime.HasValue).FirstOrDefaultAsync(x => x.Name == name);
+        
+            entity.ScheduleTime = timeSchedule;
+
+            await db.SaveChangesAsync();
+
+            return Ok($"Workout {entity.Name} scheduled on {entity.ScheduleTime}");
         }
     }
 }

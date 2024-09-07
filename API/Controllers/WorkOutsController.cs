@@ -114,5 +114,26 @@ namespace API.Controllers
 
             return Ok("Updated");
         }
+
+
+
+        [HttpDelete]
+        [Route("deleteWorkout")]
+
+        public async Task<IActionResult> Delete(string name)
+        {
+            var entity = await db.Workouts.FirstOrDefaultAsync(x => x.Name == name);
+
+            if(entity != null)
+            {
+                db.Workouts.Remove(entity);
+                await db.SaveChangesAsync();
+                return Ok("Workout removed");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }

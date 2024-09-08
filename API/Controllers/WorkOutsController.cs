@@ -23,8 +23,13 @@ namespace API.Controllers
         [HttpGet]
         [Route("getWorkout")]
 
-        public async Task<IActionResult> Select()
+        public async Task<IActionResult> Select([FromQuery]int page = 1, [FromQuery]int size = 5)
         {
+
+            if (page < 1 || size < 1)
+                return BadRequest("page or size must be greater than 1");
+
+            
             var entity = await db.WorkoutExercise
                 .Include(x => x.Workout)
                 .Include(x => x.Exercise)
@@ -44,7 +49,8 @@ namespace API.Controllers
                         ExerciseName = e.Exercise.Name,
                         ExerciseDescription = e.Exercise.Description
                     }).ToList()
-                })
+                }).Skip((page-1) * size)
+                .Take(size)
                 .ToListAsync();
 
             return Ok(entity);
@@ -94,7 +100,7 @@ namespace API.Controllers
 
         [HttpPut]
         [Route("updateWorkout")]
-        public async Task<IActionResult> Update(WorkOutDTO dto)
+        public async Task<IActionResult> Update(WorkOutUpdateDTO dto)
         {
 
             var workoutExercise = await db.WorkoutExercise.Include(x => x.Workout)
@@ -176,7 +182,7 @@ namespace API.Controllers
         [HttpGet]
         [Route("raport")]
 
-        public async Task<IActionResult> GenerateRaport()
+        public async Task<IActionResult> GenerateRaport([FromQuery] int page = 1, [FromQuery] int size = 5)
         {
             var entity = await db.WorkoutExercise
                 .Include(x => x.Workout)
@@ -203,6 +209,8 @@ namespace API.Controllers
                         Category = e.Exercise.Category.Name
                     }).ToList()
                 })
+                .Skip((page -1) * size)
+                .Take(size)
                 .ToListAsync();
 
             return Ok(entity);

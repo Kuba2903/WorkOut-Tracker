@@ -117,7 +117,11 @@ namespace API.Controllers
             return Ok("Updated");
         }
 
-
+        /// <summary>
+        /// Delete workout from the database
+        /// </summary>
+        /// <param name="name">enter the name of workout you want to delete</param>
+        /// <returns></returns>
 
         [HttpDelete]
         [Route("deleteWorkout")]
@@ -148,13 +152,54 @@ namespace API.Controllers
         [Route("schedule")]
         public async Task<IActionResult> Schedule(string name, DateTime timeSchedule)
         {
-            var entity = await db.Workouts.Where(x => !x.ScheduleTime.HasValue).FirstOrDefaultAsync(x => x.Name == name);
+            var entity = await db.Workouts.Where(x => !x.ScheduleTime.HasValue).
+                FirstOrDefaultAsync(x => x.Name == name);
         
             entity.ScheduleTime = timeSchedule;
 
             await db.SaveChangesAsync();
 
             return Ok($"Workout {entity.Name} scheduled on {entity.ScheduleTime}");
+        }
+
+        /// <summary>
+        /// Generates raport on past workouts
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet]
+        [Route("raport")]
+
+        public async Task<IActionResult> GenerateRaport()
+        {
+            var entity = await db.WorkoutExercise
+                .Include(x => x.Workout)
+                .Include(x => x.Exercise).ThenInclude(x => x.Category).
+                    Where(y => y.Workout.ScheduleTime < DateTime.Today)
+                .GroupBy(x => new
+                {
+                    x.Workout.Name,
+                    x.Workout.Comments,
+                    x.Workout.ScheduleTime
+                })
+                .Select(g => new
+                {
+                    WorkoutName = g.Key.Name,
+                    Comments = g.Key.Comments,
+                    ScheduleTime = g.Key.ScheduleTime,
+                    Exercises = g.Select(e => new
+                    {
+                        ExerciseName = e.Exercise.Name,
+                        ExerciseDescription = e.Exercise.Description,
+                        Repetition = e.Exercise.Repetition,
+                        Sets = e.Exercise.Sets,
+                        Weight = e.Exercise.Weight,
+                        Category = e.Exercise.Category.Name
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(entity);
         }
     }
 }

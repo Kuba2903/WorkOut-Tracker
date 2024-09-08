@@ -85,31 +85,37 @@ namespace API.Controllers
             return Ok("Workout added");
         }
 
+
+        /// <summary>
+        /// Allows to add more exercises for the workout
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+
         [HttpPut]
         [Route("updateWorkout")]
         public async Task<IActionResult> Update(WorkOutDTO dto)
         {
-            var workout = await db.Workouts.FirstOrDefaultAsync(x => x.Name == dto.Name);
+
+            var workoutExercise = await db.WorkoutExercise.Include(x => x.Workout)
+                .FirstOrDefaultAsync(x => x.Workout.Name == dto.Name);
+
+            workoutExercise.Workout.Comments += $". {dto.Comment}";
+
             var exercises = await db.Exercises.Where(e => dto.ExerciseNames.Contains(e.Name)).ToListAsync();
-            var workoutExercise = await db.WorkoutExercise.Where(x => x.WorkoutId == workout.Id).ToListAsync();
 
-            List<WorkoutExercise> modified = new List<WorkoutExercise>();
-            workout.Comments += $". {dto.Comment}";
 
-            foreach (var exercise in exercises)
+            foreach (var x in exercises)
             {
-                foreach (var workoutexercsise in workoutExercise)
+                if(workoutExercise.ExerciseId != x.Id)
                 {
-                    if(workoutexercsise.ExerciseId != exercise.Id)
+                    WorkoutExercise entity = new WorkoutExercise
                     {
-                        modified.Add(new WorkoutExercise { ExerciseId = exercise.Id, WorkoutId = workout.Id });
-                    }
+                        ExerciseId = x.Id,
+                        WorkoutId = workoutExercise.WorkoutId
+                    };
+                    await db.WorkoutExercise.AddAsync(entity);
                 }
-            }
-
-            foreach (var item in modified)
-            {
-                await db.WorkoutExercise.AddAsync(item);
             }
 
             await db.SaveChangesAsync();
@@ -145,8 +151,8 @@ namespace API.Controllers
         /// <summary>
         /// Allows to schedule workouts for specific date
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="timeSchedule"></param>
+        /// <param name="name">enter the name of workout you want to schedule</param>
+        /// <param name="timeSchedule">schedule with the provided date</param>
         /// <returns></returns>
         [HttpPut]
         [Route("schedule")]

@@ -1,17 +1,17 @@
 ﻿using Data;
 using Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tests
 {
     public class WorkoutExerciseTest : IClassFixture<AppTest<Program>>
     {
-        private readonly HttpClient _context;
+        private readonly HttpClient client;
         private readonly AppTest<Program> _appTest;
 
-        public WorkoutExerciseTest(HttpClient context, AppTest<Program> appTest)
+        public WorkoutExerciseTest( AppTest<Program> appTest)
         {
-            _context = context;
-            _appTest = appTest;
+            client = appTest.CreateClient();
         }
 
 
@@ -73,6 +73,24 @@ namespace Tests
             db.Categories.RemoveRange(db.Categories);
 
             await db.SaveChangesAsync();
+        }
+
+
+        [Fact]
+
+        public async Task CreateExercises()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+
+            var test = await client.GetAsync("https://localhost:7241/api/Exercise/getExercises");
+
+            Assert.True(test.IsSuccessStatusCode);
         }
     }
 }

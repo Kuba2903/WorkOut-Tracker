@@ -1,8 +1,10 @@
-﻿using Azure;
+﻿using AutoMapper;
+using Azure;
 using Data;
 using Data.DTO_s;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Text;
 
@@ -127,6 +129,48 @@ namespace Tests
             var test = await client.PostAsJsonAsync("https://localhost:7241/api/Exercise/createExercise", entity);
 
             Assert.Equal(HttpStatusCode.OK, test.StatusCode);
+        }
+
+
+
+        [Fact]
+
+        public async Task DeleteShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+            var test = await client.DeleteAsync("https://localhost:7241/api/Exercise/exerciseDelete?name=exercise0");
+
+            Assert.Equal(HttpStatusCode.OK, test.StatusCode);
+        }
+
+
+        [Fact]
+
+        public async Task PutShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+
+
+                var entity = await context.Exercises.FirstAsync();
+
+                entity.Sets = 1;
+                entity.Weight = 20;
+                entity.Repetition = 10;
+
+                var test = await client.PutAsJsonAsync("https://localhost:7241/api/Exercise/exerciseUpdate", entity);
+                Assert.Equal(HttpStatusCode.OK, test.StatusCode);
+            }
+
         }
     }
 }

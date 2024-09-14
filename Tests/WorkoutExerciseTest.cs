@@ -1,6 +1,10 @@
-﻿using Data;
+﻿using Azure;
+using Data;
+using Data.DTO_s;
 using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Text;
 
 namespace Tests
 {
@@ -12,7 +16,10 @@ namespace Tests
         public WorkoutExerciseTest( AppTest<Program> appTest)
         {
             client = appTest.CreateClient();
+            _appTest = appTest;
         }
+
+
 
 
         private async Task SeedData(AppDbContext db)
@@ -78,7 +85,7 @@ namespace Tests
 
         [Fact]
 
-        public async Task CreateExercises()
+        public async Task GetShouldReturnOkStatus()
         {
             using (var scope = _appTest.Services.CreateScope())
             {
@@ -91,6 +98,35 @@ namespace Tests
             var test = await client.GetAsync("https://localhost:7241/api/Exercise/getExercises");
 
             Assert.True(test.IsSuccessStatusCode);
+        }
+
+
+        [Fact]
+
+        public async Task PostShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+
+            ExerciseDTO entity = new ExerciseDTO()
+            {
+                Name = "test",
+                Category = "Cardio",
+                Description = "test description",
+                Repetition = 5,
+                Sets = 5,
+                Weight = 5
+            };
+
+
+            var test = await client.PostAsJsonAsync("https://localhost:7241/api/Exercise/createExercise", entity);
+
+            Assert.Equal(HttpStatusCode.OK, test.StatusCode);
         }
     }
 }

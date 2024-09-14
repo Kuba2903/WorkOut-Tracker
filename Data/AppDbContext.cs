@@ -18,6 +18,8 @@ namespace Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercise { get; set; }
         public DbSet<WorkoutUser> WorkoutUser { get; set; }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
             optionsBuilder.UseSqlServer("Data Source=HP;Initial Catalog=ExerciseDb;Integrated Security=True;Trust Server Certificate=True");
         

@@ -22,7 +22,7 @@ namespace Data.Entities
         public int? CategoryId { get; set; }
         [JsonIgnore]
         public Category? Category { get; set; }
-
+        [JsonIgnore]
         public ICollection<WorkoutExercise>? WorkoutExercises { get; set; }
 
     }

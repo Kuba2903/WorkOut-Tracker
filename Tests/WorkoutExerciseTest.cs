@@ -87,7 +87,7 @@ namespace Tests
 
         [Fact]
 
-        public async Task GetShouldReturnOkStatus()
+        public async Task ExerciseGetShouldReturnOkStatus()
         {
             using (var scope = _appTest.Services.CreateScope())
             {
@@ -105,7 +105,7 @@ namespace Tests
 
         [Fact]
 
-        public async Task PostShouldReturnOkStatus()
+        public async Task ExercisePostShouldReturnOkStatus()
         {
             using (var scope = _appTest.Services.CreateScope())
             {
@@ -135,7 +135,7 @@ namespace Tests
 
         [Fact]
 
-        public async Task DeleteShouldReturnOkStatus()
+        public async Task ExerciseDeleteShouldReturnOkStatus()
         {
             using (var scope = _appTest.Services.CreateScope())
             {
@@ -152,7 +152,7 @@ namespace Tests
 
         [Fact]
 
-        public async Task PutShouldReturnOkStatus()
+        public async Task ExercisePutShouldReturnOkStatus()
         {
             using (var scope = _appTest.Services.CreateScope())
             {
@@ -172,5 +172,87 @@ namespace Tests
             }
 
         }
+
+
+        [Fact]
+
+        public async Task WorkoutGetShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+            var test = await client.GetAsync("https://localhost:7241/api/WorkOuts/getWorkout");
+
+            Assert.True(test.StatusCode == HttpStatusCode.OK);
+        }
+
+
+        [Fact]
+
+        public async Task WorkoutPostShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+            var entity = new WorkOutDTO()
+            {
+                Name = "Test",
+                Comment = "test comment",
+                ExerciseNames = new List<string> { "exercise0", "exercise1" }
+            };
+
+            var test = await client.PostAsJsonAsync("https://localhost:7241/api/WorkOuts/createWorkout",entity);
+
+            Assert.Equal(HttpStatusCode.OK,test.StatusCode);
+        }
+
+
+        [Fact]
+
+        public async Task WorkoutPutShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+
+
+                var entity = await context.Workouts.FirstAsync();
+
+                entity.Comments += "Test edit";
+
+                var test = await client.PutAsJsonAsync("https://localhost:7241/api/WorkOuts/updateWorkout",entity);
+
+                Assert.Equal(HttpStatusCode.OK, test.StatusCode);
+            }
+
+        }
+
+
+        [Fact]
+
+        public async Task WorkoutDeleteShouldReturnOkStatus()
+        {
+            using (var scope = _appTest.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await ClearData(context);
+                await SeedData(context);
+            }
+
+            var test = await client.DeleteAsync("https://localhost:7241/api/WorkOuts/deleteWorkout?name=workout0");
+
+            Assert.True(test.IsSuccessStatusCode);
+        }
+
     }
 }
